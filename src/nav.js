@@ -18,7 +18,8 @@ export function initNavigation(currentPage) {
   const pages = [
     { id: 'mobius', name: 'Möbius Strip', url: 'index.html' },
     { id: 'tesseract', name: 'Tesseract (4D)', url: 'tesseract.html' },
-    { id: 'rocket', name: 'Rocket Thruster', url: 'rocket.html' }
+    { id: 'rocket', name: 'Rocket Thruster', url: 'rocket.html' },
+    { id: 'car', name: 'Hyper Detailed Car', url: 'car.html' }
   ];
   
   pages.forEach(page => {
