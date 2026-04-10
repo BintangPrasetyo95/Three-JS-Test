@@ -12,7 +12,7 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 const scene = new THREE.Scene();
 const fogColor = new THREE.Color(0x2a2510); // Darker muddy brown
 scene.background = fogColor;
-scene.fog = new THREE.FogExp2(fogColor, 0.09); // Thicker fog 
+scene.fog = new THREE.FogExp2(fogColor, 0.08); // Slightly adjusted for better distance masking
 
 const camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 100);
 camera.position.set(0, 1.7, 0); // Eye level
@@ -118,12 +118,13 @@ scene.add(ceiling);
 
 // Maze / Infinite Generation Setup
 const BLOCK_SIZE = 4;
-const RENDER_RADIUS = 8; // blocks in any direction
+const RENDER_RADIUS = 12; // Increased to cover more distance
 const MAX_INSTANCES = (RENDER_RADIUS*2+1) * (RENDER_RADIUS*2+1);
 
 const wallGeo = new THREE.BoxGeometry(BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
 const wallMat = new THREE.MeshStandardMaterial({ map: wallTex, roughness: 0.9 });
 const instancedWalls = new THREE.InstancedMesh(wallGeo, wallMat, MAX_INSTANCES);
+instancedWalls.frustumCulled = false; // Prevent culling as we move global instances
 scene.add(instancedWalls);
 
 // Shadowy Figure Asset
