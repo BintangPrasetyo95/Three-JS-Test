@@ -19,7 +19,9 @@ export function initNavigation(currentPage) {
     { id: 'mobius', name: 'Möbius Strip', url: 'index.html' },
     { id: 'tesseract', name: 'Tesseract (4D)', url: 'tesseract.html' },
     { id: 'rocket', name: 'Rocket Thruster', url: 'rocket.html' },
-    { id: 'car', name: 'Hyper Detailed Car', url: 'car.html' }
+    { id: 'car', name: 'Formula 1', url: 'car.html' },
+    { id: 'hatchback', name: 'White Hatchback', url: 'hatchback.html' },
+    { id: 'backrooms', name: 'The Backrooms', url: 'backrooms.html' }
   ];
   
   pages.forEach(page => {
