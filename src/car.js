@@ -20,7 +20,8 @@ camera.position.set(15, 8, 15);
 
 const controls = new OrbitControls(camera, canvas);
 controls.enableDamping = true;
-controls.dampingFactor = 0.05;
+controls.dampingFactor = 0.04; // More fluid sliding
+controls.enableZoom = false; // Disable native choppy zoom so we can manually smooth it
 controls.autoRotate = true;
 controls.autoRotateSpeed = 1.5;
 controls.maxPolarAngle = Math.PI / 2 - 0.05;
@@ -217,16 +218,24 @@ const createWheel = () => {
     tire.rotation.z = Math.PI / 2;
     tire.castShadow = true;
     wGroup.add(tire);
-    // Tire treads
+    // Tire treads (Optimized via InstancedMesh)
+    const treadGeom = new THREE.BoxGeometry(0.72, 0.1, 0.2);
+    const treadInstanced = new THREE.InstancedMesh(treadGeom, rubber, 24);
+    treadInstanced.castShadow = true;
+    const dummy = new THREE.Object3D();
+    
     for(let i=0; i<24; i++) {
-        const tread = new THREE.Mesh(new THREE.BoxGeometry(0.72, 0.1, 0.2), rubber);
-        tread.position.y = 0.78;
-        tread.rotation.x = 0.1; // sloped tread
-        const tGroup = new THREE.Group();
-        tGroup.add(tread);
-        tGroup.rotation.x = (Math.PI*2 / 24) * i;
-        wGroup.add(tGroup);
+        dummy.position.set(0, 0, 0);
+        dummy.rotation.set(0, 0, 0);
+        
+        dummy.rotation.x = (Math.PI*2 / 24) * i;
+        dummy.translateY(0.78);
+        dummy.rotateX(0.1); // sloped tread
+        
+        dummy.updateMatrix();
+        treadInstanced.setMatrixAt(i, dummy.matrix);
     }
+    wGroup.add(treadInstanced);
     
     // Rim
     const rim = new THREE.Mesh(new THREE.CylinderGeometry(0.65, 0.65, 0.72, 32), glossPaint);
@@ -275,23 +284,40 @@ for(let i=0; i<5; i++) {
     addPart(new THREE.TorusGeometry(0.12, 0.03, 8, 16).rotateY(Math.PI/2), steel, [-1.5, 0.2 + i*0.05, -3.2]);
 }
 
-// 7. Micro details (Greebles)
-// Adding lots of small boxes/cylinders all over the chassis to simulate complex mechanics
-for(let i=0; i<80; i++) {
+// 7. Micro details (Greebles) - Optimized via InstancedMesh
+const greebleCount = 80;
+const boxGreebles = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 1, 1), steel, greebleCount);
+const cylGreebles = new THREE.InstancedMesh(new THREE.CylinderGeometry(1, 1, 1, 8), carbonFiber, greebleCount);
+boxGreebles.castShadow = true; boxGreebles.receiveShadow = true;
+cylGreebles.castShadow = true; cylGreebles.receiveShadow = true;
+
+const dummyNode = new THREE.Object3D();
+let boxIdx = 0, cylIdx = 0;
+
+for(let i=0; i<greebleCount; i++) {
     const isBox = Math.random() > 0.3;
-    const geom = isBox 
-        ? new THREE.BoxGeometry(0.1+Math.random()*0.3, 0.05+Math.random()*0.1, 0.1+Math.random()*0.4)
-        : new THREE.CylinderGeometry(0.02+Math.random()*0.03, 0.02+Math.random()*0.03, 0.1+Math.random()*0.5).rotateX(Math.random()*Math.PI);
-    
-    const mat = Math.random() > 0.5 ? carbonFiber : steel;
-    
-    // Distribute long the sides, back, and top
     const x = (Math.random() > 0.5 ? 1 : -1) * (1.8 + Math.random()*0.4);
     const y = 0.1 + Math.random()*0.8;
     const z = -4 + Math.random()*8;
     
-    addPart(geom, mat, [x,y,z]);
+    dummyNode.position.set(x, y, z);
+    
+    if (isBox) {
+        dummyNode.scale.set(0.1+Math.random()*0.3, 0.05+Math.random()*0.1, 0.1+Math.random()*0.4);
+        dummyNode.rotation.set(0, 0, 0);
+        dummyNode.updateMatrix();
+        boxGreebles.setMatrixAt(boxIdx++, dummyNode.matrix);
+    } else {
+        dummyNode.scale.set(0.02+Math.random()*0.03, 0.1+Math.random()*0.5, 0.02+Math.random()*0.03);
+        dummyNode.rotation.set(Math.random()*Math.PI, 0, 0);
+        dummyNode.updateMatrix();
+        cylGreebles.setMatrixAt(cylIdx++, dummyNode.matrix);
+    }
 }
+boxGreebles.count = boxIdx;
+cylGreebles.count = cylIdx;
+carGroup.add(boxGreebles);
+carGroup.add(cylGreebles);
 
 // 8. Event Listeners & Animation
 window.addEventListener('resize', () => {
@@ -304,8 +330,34 @@ initNavigation('car');
 
 const clock = new THREE.Clock();
 
+// Custom smooth zoom logic
+let targetZoomDistance = camera.position.distanceTo(controls.target);
+const minZoom = 5;
+const maxZoom = 100;
+
+window.addEventListener('wheel', (e) => {
+    e.preventDefault(); // Prevent accidental page scrolling
+    // Determine how much to zoom based on scroll wheel
+    const zoomStrength = 0.015;
+    targetZoomDistance += e.deltaY * zoomStrength;
+    targetZoomDistance = Math.max(minZoom, Math.min(maxZoom, targetZoomDistance));
+}, { passive: false });
+
 function animate() {
     requestAnimationFrame(animate);
+    
+    // Smoothly lerp actual camera distance to targetZoomDistance
+    const currentDistance = camera.position.distanceTo(controls.target);
+    // Lerp towards the target (0.1 means 10% of the way there each frame - feels like butter)
+    const newDistance = THREE.MathUtils.lerp(currentDistance, targetZoomDistance, 0.1);
+    
+    // Calculate direction vector from target to camera
+    const dir = new THREE.Vector3().subVectors(camera.position, controls.target).normalize();
+    // Set new camera position safely along that vector
+    if (dir.lengthSq() > 0.1) {
+        camera.position.copy(controls.target).add(dir.multiplyScalar(newDistance));
+    }
+
     controls.update();
 
     const t = clock.getElapsedTime();
