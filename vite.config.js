@@ -12,6 +12,7 @@ export default defineConfig({
         car: resolve(__dirname, 'car.html'),
         hatchback: resolve(__dirname, 'hatchback.html'),
         backrooms: resolve(__dirname, 'backrooms.html'),
+        statue: resolve(__dirname, 'statue.html'),
       },
     },
   },

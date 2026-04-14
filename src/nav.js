@@ -21,7 +21,8 @@ export function initNavigation(currentPage) {
     { id: 'rocket', name: 'Rocket Thruster', url: 'rocket.html' },
     { id: 'car', name: 'Formula 1', url: 'car.html' },
     { id: 'hatchback', name: 'White Hatchback', url: 'hatchback.html' },
-    { id: 'backrooms', name: 'The Backrooms', url: 'backrooms.html' }
+    { id: 'backrooms', name: 'The Backrooms', url: 'backrooms.html' },
+    { id: 'statue', name: 'Wooden Statue', url: 'statue.html' }
   ];
   
   pages.forEach(page => {
