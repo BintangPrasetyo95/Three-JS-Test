@@ -2,11 +2,111 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>My Three.js App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>3D Creative Showcase | Home</title>
     <link rel="stylesheet" href="src/style.css" />
+    <!-- Adding Google Fonts for premium feel -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;800&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
   </head>
-  <body>
+  <body class="landing-page">
+    <div id="preloader">
+      <div class="preloader-content">
+        <div class="loader-logo">TRIPLE   T</div>
+        <div class="progress-container">
+          <div id="progress-bar"></div>
+        </div>
+        <div id="loading-text">Initializing 3D World...</div>
+      </div>
+    </div>
+
     <canvas id="canvas"></canvas>
+    
+    <div id="hero-overlay" class="hero-content">
+      <div class="hero-text-container">
+        <h1 class="hero-title">Tatang Three Test</h1>
+        <p class="hero-subtitle">An experiment of 3D website.</p>
+        <div class="scroll-indicator">
+          <span>Scroll to Explore</span>
+          <div class="mouse-icon"></div>
+        </div>
+      </div>
+    </div>
+
+    <section id="showcase" class="showcase-section">
+      <div class="section-header">
+        <h2 class="section-title">The Collection</h2>
+        <div class="title-underline"></div>
+      </div>
+
+      <div class="projects-grid bento-grid">
+        <!-- 1. Statue (Hero 2x2) -->
+        <a href="statue.html" class="project-tile bento-hero">
+          <div class="tile-preview preview-statue"></div>
+          <div class="tile-content">
+            <span class="tile-category">Sculptural</span>
+            <h3 class="tile-title">Wooden Statue</h3>
+            <p class="tile-desc">High-detail GLTF model with cinematic intro and custom lighting.</p>
+          </div>
+        </a>
+
+        <!-- 2. Formula 1 (Wide 2x1) -->
+        <a href="car.html" class="project-tile bento-wide">
+          <div class="tile-preview preview-car"></div>
+          <div class="tile-content">
+            <span class="tile-category">Automotive</span>
+            <h3 class="tile-title">Formula 1</h3>
+            <p class="tile-desc">Hyper-detailed racing car built from scratch with neon highlights.</p>
+          </div>
+        </a>
+
+        <!-- 3. Tesseract (Standard 1x1) -->
+        <a href="tesseract.html" class="project-tile bento-standard">
+          <div class="tile-preview preview-tesseract"></div>
+          <div class="tile-content">
+            <span class="tile-category">Geometry</span>
+            <h3 class="tile-title">Tesseract</h3>
+            <p class="tile-desc">4D hypercube projection with glass materials.</p>
+          </div>
+        </a>
+
+        <!-- 4. Backrooms (Tall 1x2) -->
+        <a href="backrooms.html" class="project-tile bento-tall">
+          <div class="tile-preview preview-backrooms"></div>
+          <div class="tile-content">
+            <span class="tile-category">Horror</span>
+            <h3 class="tile-title">Backrooms</h3>
+            <p class="tile-desc">Infinite procedural maze with atmospheric lighting and glitches.</p>
+          </div>
+        </a>
+
+        <!-- 5. Rocket (Wide 2x1) -->
+        <a href="rocket.html" class="project-tile bento-wide">
+          <div class="tile-preview preview-rocket"></div>
+          <div class="tile-content">
+            <span class="tile-category">Sci-Fi</span>
+            <h3 class="tile-title">Rocket Thruster</h3>
+            <p class="tile-desc">Animated particle trails and reactive thruster UI.</p>
+          </div>
+        </a>
+
+        <!-- 6. Möbius Strip (Standard 1x1) -->
+        <a href="mobius.html" class="project-tile bento-standard">
+          <div class="tile-preview preview-mobius"></div>
+          <div class="tile-content">
+            <span class="tile-category">Topology</span>
+            <h3 class="tile-title">Möbius Strip</h3>
+            <p class="tile-desc">Procedural parametric geometry with alpha-mapped textures.</p>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <footer class="landing-footer">
+      <p>&copy; 2026 Tatang Three.js Test</p>
+    </footer>
+
     <script type="module" src="./src/main.js"></script>
   </body>
 </html>

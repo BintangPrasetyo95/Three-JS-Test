@@ -7,6 +7,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'index.html'),
+        mobius: resolve(__dirname, 'mobius.html'),
         tesseract: resolve(__dirname, 'tesseract.html'),
         rocket: resolve(__dirname, 'rocket.html'),
         car: resolve(__dirname, 'car.html'),

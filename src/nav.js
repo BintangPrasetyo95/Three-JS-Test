@@ -4,8 +4,13 @@ export function initNavigation(currentPage) {
   
   const toggleBtn = document.createElement('button');
   toggleBtn.className = 'nav-toggle';
-  // Check if there is a saved state for the menu in localStorage
-  const isMenuOpen = localStorage.getItem('navMenuOpen') === 'true';
+  // Logic for default open state if no localStorage exists
+  const defaultOpenPages = ['mobius', 'tesseract'];
+  const hasSavedState = localStorage.getItem('navMenuOpen') !== null;
+  const isMenuOpen = hasSavedState 
+    ? localStorage.getItem('navMenuOpen') === 'true'
+    : defaultOpenPages.includes(currentPage);
+
   toggleBtn.textContent = 'Explore \u25BC';
   
   const menu = document.createElement('div');
@@ -16,7 +21,8 @@ export function initNavigation(currentPage) {
   }
   
   const pages = [
-    { id: 'mobius', name: 'Möbius Strip', url: 'index.html' },
+    { id: 'home', name: 'Landing Page', url: 'index.html' },
+    { id: 'mobius', name: 'Möbius Strip', url: 'mobius.html' },
     { id: 'tesseract', name: 'Tesseract (4D)', url: 'tesseract.html' },
     { id: 'rocket', name: 'Rocket Thruster', url: 'rocket.html' },
     { id: 'car', name: 'Formula 1', url: 'car.html' },
